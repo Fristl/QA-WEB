@@ -1,6 +1,8 @@
 """Conftest."""
+import random
+import string
+import uuid
 from typing import Any
-from typing import Callable
 from typing import Generator
 
 import pytest
@@ -13,16 +15,12 @@ from selenium.webdriver import FirefoxService
 from selenium.webdriver import Safari
 from selenium.webdriver import SafariOptions
 from selenium.webdriver import SafariService
-from selenium.webdriver.common.by import ByType
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 
 
-def pytest_addoption(parser) -> None:
+def pytest_addoption(parser: Any) -> None:
     """
     Custom command line parameters for running test,
     by default Chrome driver.
@@ -67,10 +65,8 @@ def create_browser(browser_name: str) -> WebDriver | None:
     return None
 
 
-
-
 @pytest.fixture
-def browser(request) -> Generator[WebDriver, Any, None]:
+def browser(request: Any) -> Generator[WebDriver, Any, None]:
     """Select browser."""
     browser_name = request.config.getoption("--browser")
     driver = create_browser(browser_name)
@@ -82,62 +78,9 @@ def browser(request) -> Generator[WebDriver, Any, None]:
 
 
 @pytest.fixture
-def base_url(request) -> str:
+def base_url(request: Any) -> str:
     """Base URL."""
     return request.config.getoption("--base_url")
-
-
-def wait_for_element(
-    driver: WebDriver,
-    by: ByType,
-    value: str,
-    timeout: int = 5,
-) -> WebElement:
-    """Explicit waiter."""
-    return WebDriverWait(
-        driver,
-        timeout,
-    ).until(
-        expected_conditions.visibility_of_element_located((by, value)),
-    )
-
-
-def wait_for_by(
-    driver: WebDriver,
-    *,
-    by: ByType | str,
-    value: str,
-    timeout: int = 5,
-) -> WebElement:
-    return WebDriverWait(
-        driver,
-        timeout,
-    ).until(
-        expected_conditions.visibility_of_element_located((by, value)),
-    )
-
-
-def wait_for_condition(
-    driver: WebDriver,
-    *,
-    condition: Callable,
-    timeout: int = 5,
-) -> WebDriverWait:
-    return WebDriverWait(driver, timeout).until(condition)
-
-
-def wait_for_contains_url(
-    driver: WebDriver,
-    *,
-    url_contains: str,
-    timeout: int = 5,
-) -> bool:
-    return WebDriverWait(
-        driver,
-        timeout,
-    ).until(
-        expected_conditions.url_contains(url_contains),
-    )
 
 
 @pytest.fixture
@@ -145,4 +88,44 @@ def admin_credentials() -> dict[str, str]:
     return {
         "username": "user",
         "password": "bitnami",
+    }
+
+
+@pytest.fixture
+def unique_email() -> str:
+    return f"qa_{uuid.uuid4().hex[:8]}@example.com"
+
+
+@pytest.fixture
+def unique_product_name() -> str:
+    return f"{uuid.uuid4().hex[:6]}"
+
+
+@pytest.fixture
+def random_string(length: int = 6) -> str:
+    return "".join(random.choices(string.ascii_letters, k=length))  # noqa: S311
+
+
+@pytest.fixture
+def random_password(length: int = 10) -> str:
+    chars = string.ascii_letters + string.digits + "!@#"
+    return "".join(random.choices(chars, k=length))  # noqa: S311
+
+
+@pytest.fixture
+def unique_seo() -> str:
+    return uuid.uuid4().hex[:6]
+
+
+@pytest.fixture
+def new_user(
+    random_string: str,
+    unique_email: str,
+    random_password: str,
+) -> dict[str, str]:
+    return {
+        "firstname": random_string,
+        "lastname": random_string,
+        "email": unique_email,
+        "password": random_password,
     }
