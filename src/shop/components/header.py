@@ -1,6 +1,7 @@
 """Header of the OpenCart."""
 import re
 
+import allure
 from selenium.webdriver.common.by import By
 
 from src.base import BasePage
@@ -14,10 +15,12 @@ class Header:
     def __init__(self, page: BasePage):
         self.page = page
 
+    @allure.step("Get currency text")
     def current_currency_text(self) -> str:
         """Return currency."""
         return self.page.get_element(self.CURRENCY_TOGGLE).text
 
+    @allure.step("Attempt to switch currency")
     def switch_currency(
         self,
         currency_code: str,

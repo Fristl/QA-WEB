@@ -1,4 +1,5 @@
 """Admin product page."""
+import allure
 from selenium.webdriver.common.by import By
 
 from src.admin.base_page import AdminBasePage
@@ -25,6 +26,7 @@ class AdminProductFormPage(AdminBasePage):
         "//button[@type='submit' and @form='form-product']",
     )
 
+    @allure.step("Fill new product form and try to save it")
     def fill_and_save(
         self,
         name: str,

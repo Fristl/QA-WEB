@@ -1,4 +1,6 @@
 """Home page."""
+
+import allure
 from selenium.webdriver.common.by import By
 
 from src.shop.base_page import ShopBasePage
@@ -13,6 +15,7 @@ class HomePage(ShopBasePage):
         "button[title='Add to Cart']",
     )
 
+    @allure.step("Add product {product_name} to cart")
     def add_product_to_cart(self, product_name: str) -> None:
         """Add product to cart."""
         # ensure products are visible
@@ -31,6 +34,7 @@ class HomePage(ShopBasePage):
         # click via js, cause the regular selenium click doesn't work
         self.execute_js("arguments[0].click();", add_to_cart_button)
 
+    @allure.step("Success alert is displayed")
     def success_alert_text(self) -> str:
         """Alert."""
         return self.get_element((By.CSS_SELECTOR, ".alert-success")).text

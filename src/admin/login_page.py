@@ -1,4 +1,5 @@
 """Login admin page."""
+import allure
 from selenium.webdriver.common.by import By
 
 from src.base import BasePage
@@ -14,6 +15,7 @@ class AdminLoginPage(BasePage):
     SUBMIT = (By.XPATH, "//button[@type='submit']")
     TITLE = (By.CLASS_NAME, "card-header")
 
+    @allure.step("Check if login page is loaded")
     def is_loaded(self) -> bool:
         """
         Method to verify that the login page
@@ -25,6 +27,7 @@ class AdminLoginPage(BasePage):
         return self.title_text == "Please enter your login details."
 
     @property
+    @allure.step("Get title text")
     def title_text(self) -> str:
         """Method to verify that the user on the admin login page."""
         return self.get_element(self.TITLE).text

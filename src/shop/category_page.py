@@ -1,6 +1,7 @@
 """Product category page."""
 from typing import ClassVar
 
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import Select
@@ -33,6 +34,7 @@ class CategoryPage(ShopBasePage):
         super().__init__(browser, base_url, path)
         self.title = title
 
+    @allure.step("Check if category is loaded and options are shown")
     def is_loaded(self) -> bool:
         """Method that verify the category is shown."""
         self.get_element((By.XPATH, f"//h2[text()='{self.title}']"))
