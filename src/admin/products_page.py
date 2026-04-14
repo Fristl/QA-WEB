@@ -1,6 +1,7 @@
 """Admin product page."""
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 from src.admin.base_page import AdminBasePage
 
@@ -37,9 +38,10 @@ class AdminProductsPage(AdminBasePage):
         self.filter_by_name(name)
         self.get_element(self.TABLE)
         rows = self.get_elements(self.TABLE_ROWS)
-        checkbox = rows[0].find_element(
-            by=self.ROW_CHECKBOX[0],
-            value=self.ROW_CHECKBOX[1],
+        checkbox = WebDriverWait(rows[0], 5).until(
+            expected_conditions.visibility_of_element_located(
+                (self.ROW_CHECKBOX[0], self.ROW_CHECKBOX[1]),
+            ),
         )
         self.click_checkbox(checkbox)
         self.click(self.DELETE_BUTTON)
@@ -56,11 +58,13 @@ class AdminProductsPage(AdminBasePage):
     def is_product_present(self, name: str) -> bool:
         """Method that verify the product is shown."""
         self.get_element(self.TABLE)
+        # rows = self.get_elements(self.TABLE_ROWS)
         rows = self.get_elements(self.TABLE_ROWS)
-        for r in rows:
-            if r.find_element(
-                by=self.ROW_NAME_CELL[0],
-                value=self.ROW_NAME_CELL[1],
+        for row in rows:
+            if WebDriverWait(row, 5).until(
+                expected_conditions.visibility_of_element_located(
+                    (self.ROW_NAME_CELL[0], self.ROW_NAME_CELL[1]),
+                ),
             ).text.split()[0] == name:
                 return True
         return False
