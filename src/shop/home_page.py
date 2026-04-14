@@ -1,10 +1,10 @@
 """Home page."""
 from selenium.webdriver.common.by import By
 
-from src.shop.base_page import BasePage
+from src.shop.base_page import ShopBasePage
 
 
-class HomePage(BasePage):
+class HomePage(ShopBasePage):
     """Home page."""
 
     PRODUCT_CARD = (By.CLASS_NAME, "product-thumb")

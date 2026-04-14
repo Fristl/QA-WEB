@@ -1,10 +1,10 @@
 """Create user account page."""
 from selenium.webdriver.common.by import By
 
-from src.shop.base_page import BasePage
+from src.shop.base_page import ShopBasePage
 
 
-class RegisterPage(BasePage):
+class RegisterPage(ShopBasePage):
     """Create the user account page."""
 
     PATH = "en-gb?route=account/register"

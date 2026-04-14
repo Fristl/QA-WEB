@@ -1,10 +1,10 @@
 """Admin product page."""
 from selenium.webdriver.common.by import By
 
-from src.admin.base_page import BasePage
+from src.admin.base_page import AdminBasePage
 
 
-class AdminProductFormPage(BasePage):
+class AdminProductFormPage(AdminBasePage):
     """Admin product page."""
 
     # Tabs

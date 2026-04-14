@@ -3,13 +3,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions
 
-from src.base import BasePage as _BasePage
+from src.base import BasePage
 
 
-class BasePage(_BasePage):
+class AdminBasePage(BasePage):
     """Base class of shop's page."""
 
     LOGOUT = (By.ID, "nav-logout")
+    PROFILE = (By.ID, "nav-profile")
     USERNAME = (By.ID, "input-username")
     PASSWORD = (By.ID, "input-password")
     SUBMIT = (By.XPATH, "//button[@type='submit']")
@@ -31,13 +32,17 @@ class BasePage(_BasePage):
         self.click(self.SUBMIT)
 
     def is_not_login(self) -> bool:
-        return bool(
-            self.wait.until(
-                expected_conditions.invisibility_of_element_located(
-                    self.LOGOUT,
-                ),
+        self.wait.until(
+            expected_conditions.invisibility_of_element_located(
+                self.PROFILE,
             ),
         )
+        self.wait.until(
+            expected_conditions.invisibility_of_element_located(
+                self.LOGOUT,
+            ),
+        )
+        return True
 
     def open_page(self):  # noqa: ANN201
         """Open page."""

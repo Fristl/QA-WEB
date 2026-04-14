@@ -5,10 +5,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import Select
 
-from src.shop.base_page import BasePage
+from src.shop.base_page import ShopBasePage
 
 
-class CategoryPage(BasePage):
+class CategoryPage(ShopBasePage):
     """Product category page."""
 
     OPTIONS: ClassVar[set[str]] = {

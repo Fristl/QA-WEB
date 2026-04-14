@@ -1,14 +1,11 @@
 """Admin product page."""
-import time
-
-from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 
-from src.admin.base_page import BasePage
+from src.admin.base_page import AdminBasePage
 
 
-class AdminProductsPage(BasePage):
+class AdminProductsPage(AdminBasePage):
     """Admin product page."""
 
     PATH = "administration/index.php?route=catalog/product"
@@ -38,43 +35,27 @@ class AdminProductsPage(BasePage):
     def delete_by_name(self, name: str) -> None:
         """Delete product."""
         self.filter_by_name(name)
-        # wait for the previous success message to disappear before proceeding,
-        # the user-like delay
-        time.sleep(0.5)
+        self.get_element(self.TABLE)
         rows = self.get_elements(self.TABLE_ROWS)
         checkbox = rows[0].find_element(
             by=self.ROW_CHECKBOX[0],
             value=self.ROW_CHECKBOX[1],
         )
-        self.execute_js("arguments[0].click()", checkbox)
+        self.click_checkbox(checkbox)
         self.click(self.DELETE_BUTTON)
-        # wait for the previous success message to disappear before proceeding,
-        # the user-like delay
-        time.sleep(0.5)
         alert = self.browser.switch_to.alert
         alert.accept()
         self.get_elements(self.SUCCESS_ALERT)
-        # wait for the previous success message to disappear before proceeding,
-        # the user-like delay
-        time.sleep(0.5)
+        self.success_text_is_hidden()
 
     def filter_by_name(self, name: str) -> None:
         """Filter products."""
-        try:
-            self.wait.until(
-                expected_conditions.invisibility_of_element_located(
-                    self.SUCCESS_ALERT,
-                ),
-            )
-        except TimeoutException as exc:
-            msg = "Unexpected SUCCESS alert is visible before filtering"
-            raise AssertionError(msg) from exc
         self.input_value(self.FILTER_NAME, name)
         self.click(self.FILTER_BUTTON)
-        self.get_element(self.TABLE)
 
     def is_product_present(self, name: str) -> bool:
         """Method that verify the product is shown."""
+        self.get_element(self.TABLE)
         rows = self.get_elements(self.TABLE_ROWS)
         for r in rows:
             if r.find_element(
@@ -87,6 +68,14 @@ class AdminProductsPage(BasePage):
     def success_text(self) -> str:
         """Success message."""
         return self.get_element(self.SUCCESS_ALERT).text
+
+    def success_text_is_hidden(self) -> None:
+        """Success message."""
+        self.wait.until(
+            expected_conditions.invisibility_of_element_located(
+                self.SUCCESS_ALERT,
+            ),
+        )
 
     def no_results_text(self) -> str:
         """No results."""

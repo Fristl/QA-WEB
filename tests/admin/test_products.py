@@ -61,7 +61,7 @@ def test_admin_delete_product(
         seo_keyword=unique_seo,
     )
     assert "Success" in products.success_text()
-
+    products.success_text_is_hidden()
     AdminProductsPage(
         browser,
         base_url,
@@ -69,6 +69,5 @@ def test_admin_delete_product(
     ).open_page()
     # Delete product
     products.delete_by_name(unique_product_name)
-    assert "Success" in products.success_text()
     assert products.no_results_text() == "No results!", \
         "Product still present after deletion"

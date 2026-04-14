@@ -69,6 +69,9 @@ class BasePage:
         """Execute JS script."""
         return self.browser.execute_script(script, *args)
 
+    def click_checkbox(self, checkbox: WebElement, idx: int | str = 0) -> None:
+        self.execute_js(f"arguments[{idx}].click()", checkbox)
+
     def wait_for_element(self, by: ByType, value: str) -> WebElement:
         """Explicit waiter."""
         return self.wait.until(

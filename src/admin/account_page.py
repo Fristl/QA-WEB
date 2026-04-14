@@ -1,8 +1,8 @@
 """Admin page."""
-from .base_page import BasePage
+from src.admin.base_page import AdminBasePage
 
 
-class AdminDashboardPage(BasePage):
+class AdminDashboardPage(AdminBasePage):
     """Admin page."""
 
     PATH = "administration/index.php?route=common/dashboard"
