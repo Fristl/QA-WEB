@@ -95,8 +95,11 @@ class BasePage:
         self.logger.info("Execute js script %s", script)
         return self.browser.execute_script(script, *args)
 
-    def click_checkbox(self, checkbox: WebElement, idx: int | str = 0) -> None:
-        self.execute_js(f"arguments[{idx}].click()", checkbox)
+    def click_element_argument(
+        self, element: WebElement,
+        idx: int | str = 0,
+    ) -> None:
+        self.execute_js(f"arguments[{idx}].click()", element)
 
     def wait_for_condition(
         self,

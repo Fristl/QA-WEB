@@ -47,7 +47,7 @@ class AdminProductsPage(AdminBasePage):
                 (self.ROW_CHECKBOX[0], self.ROW_CHECKBOX[1]),
             ),
         )
-        self.click_checkbox(checkbox)
+        self.click_element_argument(checkbox)
         self.click(self.DELETE_BUTTON)
         alert = self.browser.switch_to.alert
         alert.accept()

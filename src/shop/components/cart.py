@@ -19,7 +19,7 @@ class CartDropdown:
     def open(self) -> None:
         """Open cart dropdown."""
         cart_button = self.page.get_element(self.BUTTON)
-        self.page.execute_js("arguments[0].click();", cart_button)
+        self.page.click_element_argument(cart_button)
         self.page.get_element(self.DROPDOWN)
 
     @allure.step("Get product text")
