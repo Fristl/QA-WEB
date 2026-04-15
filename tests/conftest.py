@@ -1,10 +1,12 @@
 """Conftest."""
+import logging
 import random
 import string
 import uuid
 from typing import Any
 from typing import Generator
 
+import allure
 import pytest
 from selenium.webdriver import Chrome
 from selenium.webdriver import ChromeOptions
@@ -65,6 +67,24 @@ def create_browser(browser_name: str) -> WebDriver | None:
     return None
 
 
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(
+    item: pytest.Function,
+) -> Generator[None, Any, None]:
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when == "call" and report.failed:
+        driver = item.funcargs.get("browser")
+        if driver:
+            screenshot = driver.get_screenshot_as_png()  # type: ignore[attr-defined]
+            allure.attach(
+                screenshot,
+                name=f"Screenshot_{item.name}",
+                attachment_type=allure.attachment_type.PNG,
+            )
+
+
 @pytest.fixture
 def browser(request: Any) -> Generator[WebDriver, Any, None]:
     """Select browser."""
@@ -73,6 +93,9 @@ def browser(request: Any) -> Generator[WebDriver, Any, None]:
     if driver is None:
         msg = f"Browser '{browser_name}' is not supported"
         raise ValueError(msg)
+    driver.test_name = request.node.originalname  # type: ignore[attr-defined]
+    driver.log_level = logging.INFO  # type: ignore[attr-defined]
+
     yield driver
     driver.quit()
 

@@ -1,6 +1,7 @@
 """Product card page."""
 import re
 
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -26,10 +27,12 @@ class ProductPage(ShopBasePage):
         self.price = price
 
     @property
+    @allure.step("Get product price as text")
     def price_text(self) -> str:
         """The price element text."""
         return self.get_element(self.PRICE).text
 
+    @allure.step("Check the product card is shown")
     def is_loaded(self) -> bool:
         """Check the product card is shown."""
         self.get_element((By.XPATH, f"//h1[text()='{self.title}']"))

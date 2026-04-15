@@ -1,4 +1,5 @@
 """Create user account page."""
+import allure
 from selenium.webdriver.common.by import By
 
 from src.shop.base_page import ShopBasePage
@@ -20,6 +21,7 @@ class RegisterPage(ShopBasePage):
         "//h1[contains(text(), 'Your Account Has Been Created')]",
     )
 
+    @allure.step("Check if registration page is loaded")
     def is_loaded(self) -> bool:
         """
         Method to verify that the registration page
@@ -32,6 +34,7 @@ class RegisterPage(ShopBasePage):
         self.get_element(self.SUBMIT)
         return True
 
+    @allure.step("Input credentials for user and try to submit form.")
     def register(
         self,
         firstname: str,
@@ -46,6 +49,7 @@ class RegisterPage(ShopBasePage):
         self.click(self.PRIVACY_CHECKBOX)
         self.click(self.SUBMIT)
 
+    @allure.step("New user was created")
     def is_success(self) -> bool:
         self.get_element(self.SUCCESS_TITLE)
         return True

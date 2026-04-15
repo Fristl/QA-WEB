@@ -1,4 +1,6 @@
 """Admin product page."""
+
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -29,10 +31,12 @@ class AdminProductsPage(AdminBasePage):
     def get_table(self) -> None:
         self.get_element(self.TABLE)
 
+    @allure.step("Click to button for adding product to cart")
     def click_add(self) -> None:
         """Add new product."""
         self.click(self.ADD_BUTTON)
 
+    @allure.step("Delete product with name '{name}'")
     def delete_by_name(self, name: str) -> None:
         """Delete product."""
         self.filter_by_name(name)
@@ -50,11 +54,13 @@ class AdminProductsPage(AdminBasePage):
         self.get_elements(self.SUCCESS_ALERT)
         self.success_text_is_hidden()
 
+    @allure.step("Set products filter by name - '{name}'")
     def filter_by_name(self, name: str) -> None:
         """Filter products."""
         self.input_value(self.FILTER_NAME, name)
         self.click(self.FILTER_BUTTON)
 
+    @allure.step("Check if product with name {name} is present")
     def is_product_present(self, name: str) -> bool:
         """Method that verify the product is shown."""
         self.get_element(self.TABLE)
@@ -69,6 +75,7 @@ class AdminProductsPage(AdminBasePage):
                 return True
         return False
 
+    @allure.step("Find success alert text")
     def success_text(self) -> str:
         """Success message."""
         return self.get_element(self.SUCCESS_ALERT).text
@@ -81,6 +88,7 @@ class AdminProductsPage(AdminBasePage):
             ),
         )
 
+    @allure.step("Find no results alert text")
     def no_results_text(self) -> str:
         """No results."""
         return self.get_element(self.NO_RESULTS).text
