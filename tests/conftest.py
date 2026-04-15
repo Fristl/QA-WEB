@@ -1,5 +1,6 @@
 """Conftest."""
 import logging
+import platform
 import random
 import string
 import uuid
@@ -19,6 +20,7 @@ from selenium.webdriver import SafariOptions
 from selenium.webdriver import SafariService
 from selenium.webdriver.remote.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
 from webdriver_manager.firefox import GeckoDriverManager
 
 
@@ -43,18 +45,30 @@ def pytest_addoption(parser: Any) -> None:
 
 def create_browser(browser_name: str) -> WebDriver | None:
     if browser_name == "chrome":
+        if platform.system() == "Windows":
+            chrome_type = ChromeType.GOOGLE
+        else:
+            chrome_type = ChromeType.CHROMIUM
         chrome_options = ChromeOptions()
-        chrome_options.add_argument("--headless")
         chrome_options.add_argument("--window-size=1920,1080")
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument('--no-sandbox')
         return Chrome(
-            service=ChromeService(ChromeDriverManager().install()),
+            service=ChromeService(
+                ChromeDriverManager(chrome_type=chrome_type).install(),
+            ),
             options=chrome_options,
         )
 
     if browser_name == "firefox":
         firefox_options = FirefoxOptions()
+        firefox_options.add_argument("--headless")
+        firefox_options.add_argument("--width=1920")
+        firefox_options.add_argument("--height=1080")
         return Firefox(
-            service=FirefoxService(GeckoDriverManager().install()),
+            service=FirefoxService(
+                executable_path="/usr/local/bin/geckodriver",
+            ),
             options=firefox_options,
         )
 

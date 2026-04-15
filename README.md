@@ -15,3 +15,9 @@ pytest --browser=chrome --base_url=http://localhost:8080  (default)
 ```bash
 uv run allure serve allure-reports
 ```
+```bash
+docker build -t tests_app ./
+```
+```bash
+docker run --rm -it tests_app --browser=firefox --base_url=http://host.docker.internal:8080 --alluredir=allure-reports
+```
