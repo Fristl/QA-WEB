@@ -9,6 +9,7 @@ from typing import Generator
 
 import allure
 import pytest
+from selenium import webdriver
 from selenium.webdriver import Chrome
 from selenium.webdriver import ChromeOptions
 from selenium.webdriver import ChromeService
@@ -21,7 +22,6 @@ from selenium.webdriver import SafariService
 from selenium.webdriver.remote.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.os_manager import ChromeType
-from webdriver_manager.firefox import GeckoDriverManager
 
 
 def pytest_addoption(parser: Any) -> None:
@@ -40,6 +40,18 @@ def pytest_addoption(parser: Any) -> None:
         action="store",
         default="chrome",
         help="Choose browser: chrome or firefox",
+    )
+    parser.addoption(
+        "--executor",
+        action="store",
+        default="local",
+        help="Local or remote (selenoid/grid)",
+    )
+    parser.addoption(
+        "--executor_url",
+        action="store",
+        default="http://localhost:4444/wd/hub",
+        help="Remote executor URL, e.g. http://selenoid:4444/wd/hub",
     )
 
 
@@ -81,6 +93,34 @@ def create_browser(browser_name: str) -> WebDriver | None:
     return None
 
 
+def create_selenoid_browser(browser_name: str, executor_url) -> WebDriver | None:
+    if browser_name == "chrome":
+        options = ChromeOptions()
+        options.add_argument("--window-size=1920,1080")
+        options.add_argument("--headless")
+        options.add_argument('--no-sandbox')
+        options.add_argument("--disable-dev-shm-usage")
+
+    elif browser_name == "firefox":
+        options = FirefoxOptions()
+        options.add_argument("--headless")
+        options.add_argument("--width=1920")
+        options.add_argument("--height=1080")
+    else:
+        return None
+
+    selenoid_options = {
+        "sessionTimeout": "2m",
+        "timeZone": "Europe/Moscow",
+        "enableVNC": True,
+    }
+    options.set_capability("selenoid:options", selenoid_options)
+    return webdriver.Remote(
+        command_executor=executor_url,
+        options=options
+    )
+
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(
     item: pytest.Function,
@@ -102,8 +142,13 @@ def pytest_runtest_makereport(
 @pytest.fixture
 def browser(request: Any) -> Generator[WebDriver, Any, None]:
     """Select browser."""
-    browser_name = request.config.getoption("--browser")
-    driver = create_browser(browser_name)
+    browser_name = request.config.getoption("--browser").lower()
+    executor = request.config.getoption("--executor").lower()
+    executor_url = request.config.getoption("--executor_url")
+    if executor == "local":
+        driver = create_browser(browser_name)
+    else:
+        driver = create_selenoid_browser(browser_name, executor_url)
     if driver is None:
         msg = f"Browser '{browser_name}' is not supported"
         raise ValueError(msg)

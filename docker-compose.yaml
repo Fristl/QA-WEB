@@ -1,23 +1,4 @@
 services:
-
-  phpadmin:
-    image: 'phpmyadmin/phpmyadmin:latest'
-    environment:
-      - PMA_HOST=mariadb
-      - PMA_PORT=3306
-      - PMA_USER=bn_opencart
-    ports:
-      - '${PHPADMIN_PORT:-8888}:80'
-
-  mariadb:
-    image: docker.io/bitnami/mariadb
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      - MARIADB_USER=bn_opencart
-      - MARIADB_DATABASE=bitnami_opencart
-    ports:
-      - '3306:3306'
-
   opencart:
     image: agridyaev/opencart:4.0.2-3-debian-12-r33
     ports:
@@ -37,3 +18,50 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+
+  mariadb:
+    image: docker.io/bitnami/mariadb
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=bn_opencart
+      - MARIADB_DATABASE=bitnami_opencart
+    ports:
+      - '3306:3306'
+
+  phpadmin:
+    image: 'phpmyadmin/phpmyadmin:latest'
+    environment:
+      - PMA_HOST=mariadb
+      - PMA_PORT=3306
+      - PMA_USER=bn_opencart
+    ports:
+      - '${PHPADMIN_PORT:-8888}:80'
+    depends_on:
+      - mariadb
+
+  tests:
+    build:
+       context: ./
+       dockerfile: Dockerfile
+    image: tests_app
+    command: >
+      --base_url=http://${LOCAL_IP:-localhost}:${OPENCART_PORT}
+      --browser=${BROWSER:-chrome}
+      --executor=selenoid
+      --executor_url=http://selenoid:4444/wd/hub
+      --alluredir=allure-reports
+    volumes:
+      - ./allure-reports:/tests_app/allure-reports
+    networks:
+      - default
+    depends_on:
+      opencart:
+        condition: service_healthy
+
+volumes:
+  db_data:
+
+networks:
+  default:
+    name: selenoid
+    external: true
