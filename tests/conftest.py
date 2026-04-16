@@ -67,7 +67,7 @@ def create_browser(browser_name: str) -> WebDriver | None:
         firefox_options.add_argument("--height=1080")
         return Firefox(
             service=FirefoxService(
-                executable_path="/usr/local/bin/geckodriver",
+                executable_path="/usr/bin/geckodriver",
             ),
             options=firefox_options,
         )
