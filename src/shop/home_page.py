@@ -32,7 +32,7 @@ class HomePage(ShopBasePage):
                                 add_to_cart_button.is_displayed(),
         )
         # click via js, cause the regular selenium click doesn't work
-        self.execute_js("arguments[0].click();", add_to_cart_button)
+        self.click_element_argument(add_to_cart_button)
 
     @allure.step("Success alert is displayed")
     def success_alert_text(self) -> str:

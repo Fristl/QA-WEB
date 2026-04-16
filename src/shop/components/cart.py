@@ -18,7 +18,8 @@ class CartDropdown:
     @allure.step("Open widget CartDropdown")
     def open(self) -> None:
         """Open cart dropdown."""
-        self.page.click(self.BUTTON)
+        cart_button = self.page.get_element(self.BUTTON)
+        self.page.click_element_argument(cart_button)
         self.page.get_element(self.DROPDOWN)
 
     @allure.step("Get product text")

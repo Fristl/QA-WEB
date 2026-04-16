@@ -17,7 +17,7 @@ class BasePage:
     """Base page."""
 
     PATH = ""
-    TIMEOUT = 10
+    TIMEOUT = 30
 
     def __init__(self, browser: WebDriver, base_url: str, path: str = ""):
         self.browser = browser
@@ -73,7 +73,7 @@ class BasePage:
         chains.move_to_element(
             self.get_element(locator),
         ).pause(
-            0.6,
+            1.0,
         ).click().perform()
 
     @allure.step("Input {text} to {locator}")
@@ -95,8 +95,11 @@ class BasePage:
         self.logger.info("Execute js script %s", script)
         return self.browser.execute_script(script, *args)
 
-    def click_checkbox(self, checkbox: WebElement, idx: int | str = 0) -> None:
-        self.execute_js(f"arguments[{idx}].click()", checkbox)
+    def click_element_argument(
+        self, element: WebElement,
+        idx: int | str = 0,
+    ) -> None:
+        self.execute_js(f"arguments[{idx}].click()", element)
 
     def wait_for_condition(
         self,
