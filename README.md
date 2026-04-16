@@ -18,6 +18,11 @@ uv run allure serve allure-reports
 ```bash
 docker build -t tests_app ./
 ```
+# Selenoid
 ```bash
-docker run --rm -it tests_app --browser=firefox --base_url=http://host.docker.internal:8080 --alluredir=allure-reports
+docker-compose -f docker-compose-selenoid.yaml up
+```
+# Opencart with tests
+```bash
+docker-compose -f docker-compose.yaml up
 ```
