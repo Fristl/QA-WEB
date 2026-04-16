@@ -2,7 +2,7 @@
 import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from src.shop import BasePage
+from src.shop import ShopBasePage
 from src.shop import CategoryPage
 from src.shop import ProductPage
 from src.shop import RegisterPage
@@ -15,12 +15,12 @@ def test_page_elements(
     page_url: str,
 ) -> None:
     """Verification of elements on shop's pages."""
-    page = BasePage(browser, base_url, page_url).open_page()
+    page = ShopBasePage(browser, base_url, page_url).open_page()
     assert page.get_element(("id", "logo"))
-    assert page.get_element(("name", "search"))
-    assert page.get_element(("link text", "My Account"))
-    assert page.get_element(("link text", "Shopping Cart"))
-    assert page.get_element(("link text", "Checkout"))
+    assert page.get_element(page.SEARCH)
+    assert page.get_element(page.MY_ACCOUNT)
+    assert page.get_element(page.SHOPPING_CART)
+    assert page.get_element(page.CHECKOUT)
 
 
 @pytest.mark.parametrize(

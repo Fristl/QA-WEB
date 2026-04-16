@@ -16,8 +16,8 @@ class HomePage(ShopBasePage):
     def add_product_to_cart(self, product_name: str) -> None:
         """Add product to cart."""
         # ensure products are visible
-        self.get_element(self.PRODUCT_CARD)
-        self.get_element(
+        self.wait_for_visible_element(self.PRODUCT_CARD)
+        self.wait_for_visible_element(
             (
                 By.XPATH,
                 f"//a[text()='{product_name}']/ancestor::div[contains(@class, 'product-thumb')]",  # noqa: E501

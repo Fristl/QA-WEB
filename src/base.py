@@ -4,7 +4,6 @@ from typing import Callable
 from urllib.parse import urljoin
 
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.by import ByType
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions
@@ -33,17 +32,27 @@ class BasePage:
         self.browser.get(self.url)
         return self
 
-    def get_element(self, locator: tuple[str, str]) -> WebElement:
-        """Find element."""
-        return self.wait.until(
+    def wait_for_visible_element(self, locator: tuple[str, str]) -> None:
+        self.wait.until(
             expected_conditions.visibility_of_element_located(locator),
         )
 
-    def get_elements(self, locator: tuple[str, str]) -> list[WebElement]:
+    def wait_for_visible_elements(self, locator: tuple[str, str]) -> None:
         """Find elements."""
-        return self.wait.until(
+        self.wait.until(
             expected_conditions.visibility_of_all_elements_located(locator),
         )
+
+
+    def get_element(self, locator: tuple[str, str]) -> WebElement:
+        """Find element."""
+        self.wait_for_visible_element(locator)
+        return self.browser.find_element(by=locator[0], value=locator[1])
+
+    def get_elements(self, locator: tuple[str, str]) -> list[WebElement]:
+        """Find elements."""
+        self.wait_for_visible_elements(locator)
+        return self.browser.find_elements(by=locator[0], value=locator[1])
 
     def click(self, locator: tuple[str, str]) -> None:
         """Click on the element with the user-like delay."""
@@ -56,46 +65,26 @@ class BasePage:
 
     def input_value(self, locator: tuple[str, str], text: str) -> None:
         """Enter text to the input by single key."""
-        self.get_element(locator).click()
-        self.get_element(locator).clear()
+        input_element = self.get_element(locator)
+        input_element.click()
+        input_element.clear()
         for symbol in text:
-            self.get_element(locator).send_keys(symbol)
+            input_element.send_keys(symbol)
 
     def wait_for_url_contains(self, part_of_url: str) -> None:
         """Waiter for URL."""
         self.wait.until(expected_conditions.url_contains(part_of_url))
 
-    def execute_js(self, script: str, *args: Any) -> Any:
+    def execute_js(self, script: str, *args: Any) -> None:
         """Execute JS script."""
-        return self.browser.execute_script(script, *args)
+        self.browser.execute_script(script, *args)
 
     def click_checkbox(self, checkbox: WebElement, idx: int | str = 0) -> None:
         self.execute_js(f"arguments[{idx}].click()", checkbox)
-
-    def wait_for_element(self, by: ByType, value: str) -> WebElement:
-        """Explicit waiter."""
-        return self.wait.until(
-            expected_conditions.visibility_of_element_located((by, value)),
-        )
-
-    def wait_for_by(
-        self,
-        *,
-        by: ByType | str,
-        value: str,
-    ) -> WebElement:
-        return self.wait.until(
-            expected_conditions.visibility_of_element_located((by, value)),
-        )
 
     def wait_for_condition(
         self,
         *,
         condition: Callable,
-    ) -> WebDriverWait:
-        return self.wait.until(condition)
-
-    def wait_for_contains_url(self, *, url_contains: str) -> bool:
-        return self.wait.until(
-            expected_conditions.url_contains(url_contains),
-        )
+    ) -> None:
+        self.wait.until(condition)

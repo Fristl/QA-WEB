@@ -23,11 +23,10 @@ class AdminProductsPage(AdminBasePage):
 
     TABLE = (By.CSS_SELECTOR, "table.table")
     TABLE_ROWS = (By.CSS_SELECTOR, "table.table tbody tr")
-    ROW_NAME_CELL = (By.CSS_SELECTOR, "td:nth-child(3)")
     ROW_CHECKBOX = (By.CSS_SELECTOR, "input[type='checkbox']")
 
     def get_table(self) -> None:
-        self.get_element(self.TABLE)
+        self.wait_for_visible_element(self.TABLE)
 
     def click_add(self) -> None:
         """Add new product."""
@@ -36,7 +35,7 @@ class AdminProductsPage(AdminBasePage):
     def delete_by_name(self, name: str) -> None:
         """Delete product."""
         self.filter_by_name(name)
-        self.get_element(self.TABLE)
+        self.wait_for_visible_element(self.TABLE)
         rows = self.get_elements(self.TABLE_ROWS)
         checkbox = WebDriverWait(rows[0], 5).until(
             expected_conditions.visibility_of_element_located(
@@ -57,15 +56,10 @@ class AdminProductsPage(AdminBasePage):
 
     def is_product_present(self, name: str) -> bool:
         """Method that verify the product is shown."""
-        self.get_element(self.TABLE)
-        # rows = self.get_elements(self.TABLE_ROWS)
+        self.wait_for_visible_element(self.TABLE)
         rows = self.get_elements(self.TABLE_ROWS)
         for row in rows:
-            if WebDriverWait(row, 5).until(
-                expected_conditions.visibility_of_element_located(
-                    (self.ROW_NAME_CELL[0], self.ROW_NAME_CELL[1]),
-                ),
-            ).text.split()[0] == name:
+            if row.text.split()[0] == name:
                 return True
         return False
 

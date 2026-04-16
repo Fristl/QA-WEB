@@ -17,7 +17,7 @@ class CartDropdown:
     def open(self) -> None:
         """Open cart dropdown."""
         self.page.click(self.BUTTON)
-        self.page.get_element(self.DROPDOWN)
+        self.page.wait_for_visible_element(self.DROPDOWN)
 
     def get_product_text(self) -> str:
         """Find product in the cart dropdown."""

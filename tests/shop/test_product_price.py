@@ -31,7 +31,5 @@ def test_product_price(
 
     # Switch currency
     product.header.switch_currency(currency_code, expected_symbol)
-    price_after = product.price_text
-
-    assert price_after == expected_price, \
-        f"Expected price {expected_price}, but got {price_after}"
+    assert product.price_text == expected_price, \
+        f"Expected price {expected_price}, but got {product.price_text}"

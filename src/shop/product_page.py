@@ -32,6 +32,6 @@ class ProductPage(ShopBasePage):
 
     def is_loaded(self) -> bool:
         """Check the product card is shown."""
-        self.get_element((By.XPATH, f"//h1[text()='{self.title}']"))
-        self.get_element(self.CART_BUTTON)
+        self.wait_for_visible_element((By.XPATH, f"//h1[text()='{self.title}']"))
+        self.wait_for_visible_element(self.CART_BUTTON)
         return bool(re.search(rf"{self.price}", self.price_text))

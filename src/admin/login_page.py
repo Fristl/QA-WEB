@@ -19,13 +19,14 @@ class AdminLoginPage(BasePage):
         Method to verify that the login page
         contains all required elements.
         """
-        self.get_element(self.USERNAME)
-        self.get_element(self.PASSWORD)
-        self.get_element(self.SUBMIT)
+        self.wait_for_visible_element(self.USERNAME)
+        self.wait_for_visible_element(self.PASSWORD)
+        self.wait_for_visible_element(self.SUBMIT)
         return self.title_text == "Please enter your login details."
 
     @property
     def title_text(self) -> str:
         """Method to verify that the user on the admin login page."""
-        return self.get_element(self.TITLE).text
+        element = self.get_element(self.TITLE)
+        return element.text
 

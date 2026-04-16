@@ -25,11 +25,11 @@ class RegisterPage(ShopBasePage):
         Method to verify that the registration page
         contains all required elements.
         """
-        self.get_element(self.FIRSTNAME)
-        self.get_element(self.LASTNAME)
-        self.get_element(self.EMAIL)
-        self.get_element(self.PASSWORD)
-        self.get_element(self.SUBMIT)
+        self.wait_for_visible_element(self.FIRSTNAME)
+        self.wait_for_visible_element(self.LASTNAME)
+        self.wait_for_visible_element(self.EMAIL)
+        self.wait_for_visible_element(self.PASSWORD)
+        self.wait_for_visible_element(self.SUBMIT)
         return True
 
     def register(
@@ -47,5 +47,5 @@ class RegisterPage(ShopBasePage):
         self.click(self.SUBMIT)
 
     def is_success(self) -> bool:
-        self.get_element(self.SUCCESS_TITLE)
+        self.wait_for_visible_element(self.SUCCESS_TITLE)
         return True

@@ -11,4 +11,4 @@ def test_user_registration(
 ) -> None:
     page = RegisterPage(browser, base_url).open_page()
     page.register(**new_user)
-    assert page.is_success(), f"User with {new_user} data is not created"
+    assert page.is_success(), f"User with {new_user} data is not registered"

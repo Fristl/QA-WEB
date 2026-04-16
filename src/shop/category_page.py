@@ -35,9 +35,9 @@ class CategoryPage(ShopBasePage):
 
     def is_loaded(self) -> bool:
         """Method that verify the category is shown."""
-        self.get_element((By.XPATH, f"//h2[text()='{self.title}']"))
-        self.get_element((By.CLASS_NAME, "product-thumb"))
-        self.get_element((By.ID, "input-sort"))
+        self.wait_for_visible_element((By.XPATH, f"//h2[text()='{self.title}']"))
+        self.wait_for_visible_element((By.CLASS_NAME, "product-thumb"))
+        self.wait_for_visible_element((By.ID, "input-sort"))
         sort_dropdown = self.get_element((By.ID, "input-sort"))
         select = Select(sort_dropdown)
         actual_options = {option.text for option in select.options}

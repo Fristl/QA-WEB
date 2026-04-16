@@ -22,9 +22,7 @@ def test_currency_change_on_main(
     """Switch currency test."""
     home = HomePage(browser, base_url).open_page()
     home.header.switch_currency(currency_code, expected_symbol)
-    after = home.header.current_currency_text()
-
-    assert expected_symbol in after, \
+    assert expected_symbol in home.header.current_currency_text(), \
         f"There isn't {expected_symbol} in currency text after switching."
 
 
