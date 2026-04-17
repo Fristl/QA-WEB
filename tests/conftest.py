@@ -6,6 +6,7 @@ import string
 import uuid
 from typing import Any
 from typing import Generator
+from email.policy import default
 
 import allure
 import pytest
@@ -40,6 +41,12 @@ def pytest_addoption(parser: Any) -> None:
         action="store",
         default="chrome",
         help="Choose browser: chrome or firefox",
+    )
+    parser.addoption(
+        "--browser_version",
+        action="store",
+        default="latest",
+        help="Choose browser version",
     )
     parser.addoption(
         "--executor",
@@ -93,7 +100,11 @@ def create_browser(browser_name: str) -> WebDriver | None:
     return None
 
 
-def create_selenoid_browser(browser_name: str, executor_url) -> WebDriver | None:
+def create_selenoid_browser(
+    browser_name: str,
+    executor_url,
+    browser_version: str,
+) -> WebDriver | None:
     if browser_name == "chrome":
         options = ChromeOptions()
         options.add_argument("--window-size=1920,1080")
@@ -110,6 +121,7 @@ def create_selenoid_browser(browser_name: str, executor_url) -> WebDriver | None
         return None
 
     selenoid_options = {
+        "version": browser_version,
         "sessionTimeout": "2m",
         "timeZone": "Europe/Moscow",
         "enableVNC": True,
@@ -143,12 +155,17 @@ def pytest_runtest_makereport(
 def browser(request: Any) -> Generator[WebDriver, Any, None]:
     """Select browser."""
     browser_name = request.config.getoption("--browser").lower()
+    browser_version = request.config.getoption("--browser_version").lower()
     executor = request.config.getoption("--executor").lower()
     executor_url = request.config.getoption("--executor_url")
     if executor == "local":
         driver = create_browser(browser_name)
     else:
-        driver = create_selenoid_browser(browser_name, executor_url)
+        driver = create_selenoid_browser(
+            browser_name,
+            executor_url,
+            browser_version,
+        )
     if driver is None:
         msg = f"Browser '{browser_name}' is not supported"
         raise ValueError(msg)
