@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+    
+    parameters {
+        string(name: 'EXECUTOR_URL', defaultValue: 'http://host.docker.internal:4444/wd/hub/', description: 'Remote executor url')
+        string(name: 'OPENCART_URL', defaultValue: 'http://host.docker.internal:8080/', description: 'Opencart url')
+        choice(name: 'BROWSER', choices: ['chrome', 'firefox'], description: 'Browser')
+        string(name: 'BROWSER_VERSION', defaultValue: 'latest', description: 'Browser version')
+        string(name: 'THREAD_COUNT', defaultValue: '1', description: 'Thread count')
+    }
+
+    stages {
+        stage('Clone sources') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Fristl/QA-WEB'
+            }
+        }
+        
+        stage('Setup') {
+            steps {
+                sh '''
+                    uv sync --dev
+                    uv add --dev pytest-xdist
+                '''
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                script {
+                    def threadCount = params.THREAD_COUNT.toInteger()
+                
+                    sh """
+                        .venv/bin/pytest ./tests/ -n ${threadCount} --browser=${params.BROWSER} --browser_version=${params.BROWSER_VERSION} --executor=selenoid --executor_url=${params.EXECUTOR_URL} --base_url=${params.OPENCART_URL} --junitxml=results.xml --alluredir=allure-reports
+                     """
+                }
+            }
+            
+            post {
+                always {
+                    allure home: 'allure-reports', properties: [], name: 'allure-reports'
+                }
+            }
+        }
+    }
+}
+
+

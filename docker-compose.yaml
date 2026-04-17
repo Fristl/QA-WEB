@@ -39,25 +39,25 @@ services:
     depends_on:
       - mariadb
 
-  tests:
-    build:
-       context: ./
-       dockerfile: Dockerfile
-    image: tests_app
-    command: >
-      --base_url=http://${LOCAL_IP:-localhost}:${OPENCART_PORT}
-      --browser=${BROWSER:-chrome}
-      --browser_version=${BROWSER_VERSION:-latest}
-      --executor=selenoid
-      --executor_url=http://selenoid:4444/wd/hub
-      --alluredir=allure-reports
-    volumes:
-      - ./allure-reports:/tests_app/allure-reports
-    networks:
-      - default
-    depends_on:
-      opencart:
-        condition: service_healthy
+#  tests:
+#    build:
+#       context: ./
+#       dockerfile: Dockerfile
+#    image: tests_app
+#    command: >
+#      --base_url=http://${LOCAL_IP:-localhost}:${OPENCART_PORT}
+#      --browser=${BROWSER:-chrome}
+#      --browser_version=${BROWSER_VERSION:-latest}
+#      --executor=selenoid
+#      --executor_url=http://selenoid:4444/wd/hub
+#      --alluredir=allure-reports
+#    volumes:
+#      - ./allure-reports:/tests_app/allure-reports
+#    networks:
+#      - default
+#    depends_on:
+#      opencart:
+#        condition: service_healthy
 
 volumes:
   db_data:
