@@ -24,5 +24,5 @@ docker-compose -f docker-compose-selenoid.yaml up
 ```
 # Opencart with tests
 ```bash
-docker-compose -f docker-compose.yaml up
+docker-compose up --browser_version 128.0
 ```
